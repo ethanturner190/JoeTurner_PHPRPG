@@ -1,4 +1,4 @@
-
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,9 +17,13 @@
 
     <nav>
         <a href="index.php">Home</a>
-        <a href="login.php">Login</a>
-        <a href="register.php">Register</a>
-        <a href="leaderboard.php">Leaderboard</a>
+        <?php if (isset($_SESSION["username"])) { ?>
+            <a href="game.php">Game</a>
+            <a href="logout.php">Logout</a>
+        <?php } else { ?>
+            <a href="login.php">Login</a>
+            <a href="register.php">Register</a>
+        <?php } ?>
     </nav>
 
     <main>
