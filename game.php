@@ -346,6 +346,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $summary .= " " . $story[$_SESSION["location"]]["name"] . ".";
         $_SESSION["history"][] = "Your Story Summary: " . $summary;
         $_SESSION["history"][] = "Final XP: " . $_SESSION["xp"];
+        // Add this completed adventure to the session leaderboard.
+        if (!isset($_SESSION["leaderboard"])) {
+            $_SESSION["leaderboard"] = array();
+        }
+        $_SESSION["leaderboard"][] = array(
+            "player" => $_SESSION["username"],
+            "character" => $hero["name"],
+            "class" => $hero["class"],
+            "xp" => $_SESSION["xp"],
+            "ending" => $story[$_SESSION["location"]]["name"]
+        );
     }
 }
 

@@ -19,11 +19,13 @@
         <a href="index.php">Home</a>
         <?php if (isset($_SESSION["username"])) { ?>
             <a href="game.php">Game</a>
+            <a href="character.php">Character Creation</a>
             <a href="logout.php">Logout</a>
         <?php } else { ?>
             <a href="login.php">Login</a>
             <a href="register.php">Register</a>
         <?php } ?>
+        <a href="leaderboard.php">Leaderboard</a>
     </nav>
 
     <main>
@@ -66,6 +68,7 @@
         </ul>
 
         <a href="game.php" class="start-button">Start Game</a>
+        <a href="character.php" class="start-button">Create Character</a>
 
     </main>
 

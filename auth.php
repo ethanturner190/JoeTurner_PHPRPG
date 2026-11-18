@@ -1,5 +1,5 @@
 <?php
-// Demo accounts are kept in the PHP session. No database or file writes.
+// Demo accounts, does have persistant accounts
 function requireLogin() {
     if (!isset($_SESSION["username"])) {
         header("Location: login.php");
