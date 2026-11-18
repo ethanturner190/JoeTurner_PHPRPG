@@ -1,14 +1,16 @@
 <?php
 session_start();
+include "auth.php";
+requireLogin();
 include "story.php";
 
-// Make a character before starting the game
+// create a character before starting the game
 if (!isset($_SESSION["hero"])) {
     header("Location: character.php");
     exit;
 }
 
-// Only clear game data, not login information
+// reset game data
 $gameKeys = array(
     "location", "inventory", "searched", "room_items", "door_open",
     "monster_defeated", "forest_monster_defeated", "king_defeated",
@@ -24,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["restart"])) {
     exit;
 }
 
-// Start a new game
+// new game
 if (!isset($_SESSION["location"])) {
     $_SESSION["location"] = "cell";
     $_SESSION["inventory"] = array();
@@ -47,7 +49,7 @@ if (!isset($_SESSION["location"])) {
     }
 }
 
-// This prevents defeated monsters from appearing alive again
+// make enemies stay dead
 function roomDescription($room, $story) {
     if ($room == "courtyard" && $_SESSION["monster_defeated"]) {
         return "The courtyard is quiet. The cursed soldier lies on the ground. The forest is north and the castle gate is east.";
@@ -250,18 +252,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         else {
             $_SESSION["health"] = 0;
             $_SESSION["game_over"] = true;
-            $message = "You fight the " . $enemy . " without the right weapon. You died. Game Over. Your choice to fight ended your adventure.";
+            $message = "You fight the " . $enemy . " without the right weapon. You died. Game Over. Use a better weapon next time dingus.";
         }
     }
     else if ($command == "talk") {
         if ($room == "tavern") {
-            $message = "The old soldier says the king used dark magic. He tells you to find a silver sword in the village chapel.";
+            $message = "The old soldier says the king used dark magic, but didn't know what he was doing. He tells you to find a silver sword in the village chapel.";
             if (!in_array("You spoke to the old soldier.", $_SESSION["choices"])) {
                 $_SESSION["choices"][] = "You spoke to the old soldier.";
             }
         }
         else {
-            $message = "There is nobody here to talk to.";
+            $message = "There is nobody to talk to.";
         }
     }
     else if ($command == "stats") {
@@ -274,14 +276,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else if ($command == "journal") {
         $message = "Journal:\n";
         if (count($_SESSION["choices"]) == 0) {
-            $message .= "You have just started your adventure.\n";
+            $message .= "You have started your adventure.\n";
         }
         else {
             $message .= implode("\n", $_SESSION["choices"]) . "\n";
         }
 
         if ($room == "crown") {
-            $message .= "Prediction: Destroy the crown to break the curse, take it to rule, or leave it behind.";
+            $message .= "Prediction: Destroy the crown to break the curse, take it to rule the kingdom, or leave it behind.";
         }
         else if ($room == "throne" && !$_SESSION["king_defeated"]) {
             $message .= in_array("silver sword", $bag) ?
@@ -329,7 +331,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = "Invalid command. Type help to see commands.";
     }
 
-    // Save the command and game response to history
+    // commands and responses get saved then displayed
     $_SESSION["history"][] = "> " . $command;
     if ($message != "") {
         $_SESSION["history"][] = $message;
@@ -344,11 +346,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $summary .= " " . $story[$_SESSION["location"]]["name"] . ".";
         $_SESSION["history"][] = "Your Story Summary: " . $summary;
         $_SESSION["history"][] = "Final XP: " . $_SESSION["xp"];
+        // add finished game to leaderboard
+        if (!isset($_SESSION["leaderboard"])) {
+            $_SESSION["leaderboard"] = array();
+        }
+        $_SESSION["leaderboard"][] = array(
+            "player" => $_SESSION["username"],
+            "character" => $hero["name"],
+            "class" => $hero["class"],
+            "xp" => $_SESSION["xp"],
+            "ending" => $story[$_SESSION["location"]]["name"]
+        );
     }
 }
 
 $room = $_SESSION["location"];
 $currentStory = $story[$room];
+
+// AI story advisor
+$preview = "Type journal for your story history and a hint.";
+$bag = $_SESSION["inventory"];
+
+if ($_SESSION["game_finished"]) {
+    $preview = "Your choices have decided the kingdom's future.";
+}
+else if ($_SESSION["game_over"]) {
+    $preview = "The wrong weapon led to the end of your adventure.";
+}
+else if ($room == "cell" && !$_SESSION["door_open"]) {
+    if ($_SESSION["hero"]["strength"] >= 3) {
+        $preview = "You are strong enough to force the door, or you can find the key.";
+    }
+    else {
+        $preview = "You are not strong enough to force the door. Search for a key.";
+    }
+}
+else if ($room == "courtyard" && !$_SESSION["monster_defeated"]) {
+    $preview = in_array("old sword", $bag) || in_array("silver sword", $bag) ?
+        "Your sword should defeat the cursed soldier." :
+        "Fighting the soldier without a sword will end your adventure.";
+}
+else if ($room == "clearing" && !$_SESSION["forest_monster_defeated"]) {
+    $preview = in_array("old sword", $bag) || in_array("silver sword", $bag) ?
+        "You can fight the forest monster or continue toward the village." :
+        "You can pass the monster, but fighting without a sword is deadly.";
+}
+else if ($room == "throne" && !$_SESSION["king_defeated"]) {
+    $preview = in_array("silver sword", $bag) ?
+        "The silver sword can defeat the monster king." :
+        "You need the silver sword before you fight the monster king.";
+}
+else if ($room == "crown") {
+    $preview = "Destroying the crown breaks the curse; taking it makes you ruler; leaving it keeps the curse.";
+}
+else if ($_SESSION["village_visited"] && !in_array("silver sword", $bag)) {
+    $preview = "The village chapel may contain the weapon needed to defeat the king.";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -366,18 +420,24 @@ $currentStory = $story[$room];
     <nav>
         <a href="index.php">Home</a>
         <a href="game.php">Game</a>
+        <a href="logout.php">Logout</a>
         <a href="leaderboard.php">Leaderboard</a>
+        <a href="character.php">Character Creation</a>
     </nav>
     <main>
         <h2>Current Location: <?php echo htmlspecialchars($currentStory["name"]); ?></h2>
         <p>Character: <?php echo htmlspecialchars($_SESSION["hero"]["name"]); ?> (<?php echo htmlspecialchars($_SESSION["hero"]["class"]); ?>)</p>
+        <div class="story-preview">
+            <strong>Story Advisor:</strong>
+            <?php echo htmlspecialchars($preview); ?>
+        </div>
         <div class="game-log">
             <?php foreach (array_reverse($_SESSION["history"]) as $entry) { ?>
                 <p><?php echo nl2br(htmlspecialchars($entry)); ?></p>
             <?php } ?>
         </div>
         <?php if ($_SESSION["game_over"] || $_SESSION["game_finished"]) { ?>
-            <h3><?php echo $_SESSION["game_finished"] ? "The End" : "Game Over"; ?></h3>
+            <h3 class="ending-title"><?php echo $_SESSION["game_finished"] ? "The End" : "Game Over"; ?></h3>
             <form action="game.php" method="post">
                 <button type="submit" name="restart" value="1">Restart Game</button>
             </form>
@@ -395,3 +455,6 @@ $currentStory = $story[$room];
     </footer>
 </body>
 </html>
+/*should've added a dev shortcut system or something. 
+ive replayed the full game over 80 times just to pick out
+1 section. */

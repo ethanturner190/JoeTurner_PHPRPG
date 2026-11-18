@@ -1,7 +1,7 @@
 <?php
 
 $story = array(
-    // Act 1: Escape the castle
+    // Castle
     "cell" => array(
         "name" => "Prison Cell",
         "description" => "You wake up inside a cold prison cell.
@@ -42,7 +42,7 @@ $story = array(
         "exits" => array("south" => "hallway", "north" => "forestentrance", "east" => "gate")
     ),
 
-    // Act 2: Forest and village
+    // forest
     "forestentrance" => array(
         "name" => "Forest Entrance",
         "description" => "You leave the castle and reach the forest.
@@ -71,6 +71,7 @@ $story = array(
         "exits" => array("south" => "forestpath", "north" => "village")
     ),
 
+    // village
     "village" => array(
         "name" => "Village Square",
         "description" => "You enter an abandoned village.
@@ -110,7 +111,7 @@ $story = array(
         "exits" => array("south" => "village")
     ),
 
-    // Act 3: Return to castle
+    // Castel return
     "gate" => array(
         "name" => "Castle Gate",
         "description" => "You reach another entrance to the castle.
@@ -159,7 +160,7 @@ $story = array(
         "exits" => array("south" => "throne")
     ),
 
-    // Three separate story endings
+    // endings
     "ending_destroy" => array(
         "name" => "Ending: Curse Broken",
         "description" => "You destroy the crown. The dark magic

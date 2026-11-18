@@ -1,5 +1,7 @@
 <?php
 session_start();
+include "auth.php";
+requireLogin();
 
 $error = "";
 
@@ -39,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "speed" => $speed
         );
 
-        // Clear old gameplay when making a new character
+        // new game when making new character
         $gameKeys = array("location", "inventory", "searched", "room_items",
             "door_open", "monster_defeated", "forest_monster_defeated",
             "king_defeated", "village_visited", "game_over", "game_finished",
@@ -66,7 +68,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h1>PHPRPG</h1>
         <p>The Cursed Kingdom</p>
     </header>
-    <nav><a href="index.php">Home</a></nav>
+    <nav>
+        <a href="index.php">Home</a>
+        <a href="game.php">Game</a>
+        <a href="leaderboard.php">Leaderboard</a>
+        <a href="character.php">Character Creation</a>
+        <a href="logout.php">Logout</a>
+    </nav>
     <main>
         <h2>Create Character</h2>
         <?php if ($error != "") { ?>
