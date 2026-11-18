@@ -145,3 +145,54 @@ button {
         font-size: 35px;
     }
 }
+
+/* Small CSS-only storytelling effects */
+.story-preview {
+    background-color: #111;
+    border-left: 3px solid #5d4c2e;
+    padding: 10px;
+    margin-bottom: 15px;
+    animation: storyFade 1s ease;
+}
+
+.story-preview strong {
+    display: inline-block;
+    color: #d8b26e;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: bottom;
+    animation: storyTyping 1s steps(14, end);
+}
+
+.game-log p:first-child {
+    animation: storyFade 1s ease;
+}
+
+.ending-title {
+    color: #d8b26e;
+    font-size: 35px;
+    text-align: center;
+    margin: 30px 0;
+    animation: storyFinish 3s ease-out;
+}
+
+@keyframes storyTyping {
+    from { width: 0; }
+    to { width: 14ch; }
+}
+
+@keyframes storyFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes storyFinish {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .story-preview, .story-preview strong, .game-log p:first-child, .ending-title {
+        animation: none;
+    }
+}

@@ -362,6 +362,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $room = $_SESSION["location"];
 $currentStory = $story[$room];
+
+// Simple Story Advisor: warn the player before important decisions
+$preview = "Type journal for your story history and a hint.";
+$bag = $_SESSION["inventory"];
+
+if ($_SESSION["game_finished"]) {
+    $preview = "Your choices have decided the kingdom's future.";
+}
+else if ($_SESSION["game_over"]) {
+    $preview = "The wrong weapon led to the end of your adventure.";
+}
+else if ($room == "cell" && !$_SESSION["door_open"]) {
+    if ($_SESSION["hero"]["strength"] >= 3) {
+        $preview = "You are strong enough to force the door, or you can find the key.";
+    }
+    else {
+        $preview = "You are not strong enough to force the door. Search for a key.";
+    }
+}
+else if ($room == "courtyard" && !$_SESSION["monster_defeated"]) {
+    $preview = in_array("old sword", $bag) || in_array("silver sword", $bag) ?
+        "Your sword should defeat the cursed soldier." :
+        "Fighting the soldier without a sword will end your adventure.";
+}
+else if ($room == "clearing" && !$_SESSION["forest_monster_defeated"]) {
+    $preview = in_array("old sword", $bag) || in_array("silver sword", $bag) ?
+        "You can fight the forest monster or continue toward the village." :
+        "You can pass the monster, but fighting without a sword is deadly.";
+}
+else if ($room == "throne" && !$_SESSION["king_defeated"]) {
+    $preview = in_array("silver sword", $bag) ?
+        "The silver sword can defeat the monster king." :
+        "You need the silver sword before you fight the monster king.";
+}
+else if ($room == "crown") {
+    $preview = "Destroying the crown breaks the curse; taking it makes you ruler; leaving it keeps the curse.";
+}
+else if ($_SESSION["village_visited"] && !in_array("silver sword", $bag)) {
+    $preview = "The village chapel may contain the weapon needed to defeat the king.";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -384,13 +425,17 @@ $currentStory = $story[$room];
     <main>
         <h2>Current Location: <?php echo htmlspecialchars($currentStory["name"]); ?></h2>
         <p>Character: <?php echo htmlspecialchars($_SESSION["hero"]["name"]); ?> (<?php echo htmlspecialchars($_SESSION["hero"]["class"]); ?>)</p>
+        <div class="story-preview">
+            <strong>Story Advisor:</strong>
+            <?php echo htmlspecialchars($preview); ?>
+        </div>
         <div class="game-log">
             <?php foreach (array_reverse($_SESSION["history"]) as $entry) { ?>
                 <p><?php echo nl2br(htmlspecialchars($entry)); ?></p>
             <?php } ?>
         </div>
         <?php if ($_SESSION["game_over"] || $_SESSION["game_finished"]) { ?>
-            <h3><?php echo $_SESSION["game_finished"] ? "The End" : "Game Over"; ?></h3>
+            <h3 class="ending-title"><?php echo $_SESSION["game_finished"] ? "The End" : "Game Over"; ?></h3>
             <form action="game.php" method="post">
                 <button type="submit" name="restart" value="1">Restart Game</button>
             </form>
