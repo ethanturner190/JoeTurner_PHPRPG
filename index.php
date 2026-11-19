@@ -1,4 +1,4 @@
-
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,8 +17,14 @@
 
     <nav>
         <a href="index.php">Home</a>
-        <a href="login.php">Login</a>
-        <a href="register.php">Register</a>
+        <?php if (isset($_SESSION["username"])) { ?>
+            <a href="game.php">Game</a>
+            <a href="character.php">Character Creation</a>
+            <a href="logout.php">Logout</a>
+        <?php } else { ?>
+            <a href="login.php">Login</a>
+            <a href="register.php">Register</a>
+        <?php } ?>
         <a href="leaderboard.php">Leaderboard</a>
     </nav>
 
@@ -34,18 +40,19 @@
         <p>
             You wake up inside a prison cell with no memory
             of how you got there. Escape your cell, explore
-            the city, and find the missing king.
+            the city, and find out what happened to the kingdom.
         </p>
 
         <h3>How to Play</h3>
 
         <p>
             PHPRPG is a text based adventure game where you
-            type commands to explore different areas. Text 
+            type commands to explore different areas and rooms. Text 
             will describe your surroundings. You will type
             commands to interact with the world. 
             Your choices affect what happens throughout
-            the story and your fate.
+            the story and your fate. To see the list of
+            commands, type "help".
         </p>
 
         <p>Some commands you can use:</p>
@@ -62,6 +69,7 @@
         </ul>
 
         <a href="game.php" class="start-button">Start Game</a>
+        <a href="character.php" class="start-button">Create Character</a>
 
     </main>
 
