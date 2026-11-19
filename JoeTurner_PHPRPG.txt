@@ -1,7 +1,7 @@
 CODD URL:           https://codd.cs.gsu.edu/~jturner178/WEB/PW/PW2/index.php
 GitHub URL:         https://github.com/ethanturner190/JoeTurner_PHPRPG
 Trello URL:         https://trello.com/b/g3TiKmmN/phprpg
-YouTube URL:
+YouTube URL:        https://youtu.be/mgPlBsm1O2g
 
 Notes: All files are hosted on CODD. Use CODD URL to access the site.
 All the files will also be included in a zip file inside icollege.

@@ -13,6 +13,7 @@ How to run
 Everything is uploaded to CODD. Either go to the URL or upload all files to a server that can run php. Create an account. Create a character. Start the game. The game will end after the story is over. You can restart the game at the end or when you die. 
 CODD URL: https://codd.cs.gsu.edu/~jturner178/WEB/PW/PW2/index.php
 GitHub URL: https://github.com/ethanturner190/JoeTurner_PHPRPG
+YouTube URL: https://youtu.be/mgPlBsm1O2g
 
 AI Advisor
 The advisor uses rules from the php. It sees where you are and what your inventory holds to give you tips on where to go and if you can deafeat the enemy near you. 

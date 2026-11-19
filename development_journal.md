@@ -7,7 +7,7 @@ Date: November 18, 2026
 Live website: https://codd.cs.gsu.edu/~jturner178/WEB/PW/PW2/index.php
 GitHub: https://github.com/ethanturner190/JoeTurner_PHPRPG
 Trello: https://trello.com/b/g3TiKmmN/phprpg
-YouTube URL: 
+YouTube URL: https://youtu.be/mgPlBsm1O2g
 
 Project Overview
 Our project is a text-based RPG made with PHP, HTML, and CSS. The player creates a character, escapes a prison cell, explores the castle, forest, and village, and eventually finds the missing king. The player can collect items, fight monsters, earn XP, and choose one of three endings. We used PHP sessions to keep track of the game while the player is using the website.
@@ -18,6 +18,7 @@ Team Roles
 - Both: Helped with planning, testing, and making changes to the website.
 
 Development Sprints
+
 Sprint 1 - Planning 
 We chose the Choose Your Path RPG topic and planned a medieval story about a cursed kingdom. We decided to include character classes, an inventory, monsters, and three endings. We also planned our work using Trello and discussed team responsibilities.
 
